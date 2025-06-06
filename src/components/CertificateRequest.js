@@ -35,8 +35,14 @@ const CertificateRequest = () => {
   };
 
   const handleSubmit = (formData) => {
-    // TODO: Здесь будет логика отправки запроса в 1С
-    console.log('Данные формы:', formData);
+    // В будущем здесь будет интеграция с 1С
+    console.log('Данные для отправки в 1С:', formData);
+    
+    // Через 2 секунды возвращаемся к выбору справки
+    setTimeout(() => {
+      setShowPersonalForm(false);
+      setSelectedCertificate('');
+    }, 2000);
   };
 
   if (showPersonalForm) {

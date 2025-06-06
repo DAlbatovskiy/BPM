@@ -6,7 +6,9 @@ import {
   Container,
   Paper,
   Grid,
-  Button
+  Button,
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
@@ -18,6 +20,7 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
     studentId: '',
     comment: ''
   });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +32,36 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ type: certificateType, ...formData });
+    
+    // Формируем JSON с данными заявки
+    const requestData = {
+      certificateType,
+      studentInfo: {
+        lastName: formData.lastName,
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        group: formData.group,
+        studentId: formData.studentId
+      },
+      comment: formData.comment,
+      requestDate: new Date().toISOString()
+    };
+
+    // Выводим JSON в консоль (для демонстрации)
+    console.log('Сформированная заявка:', JSON.stringify(requestData, null, 2));
+
+    // Показываем уведомление об успехе
+    setOpenSnackbar(true);
+
+    // Передаем данные наверх (если нужно)
+    onSubmit(requestData);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
@@ -135,6 +167,17 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
           </Box>
         </form>
       </Paper>
+
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Заявка на справку успешно сформирована!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
