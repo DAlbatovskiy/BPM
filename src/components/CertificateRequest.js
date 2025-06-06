@@ -10,9 +10,11 @@ import {
   RadioGroup,
   Box,
   Container,
-  Paper
+  Paper,
+  Stack
 } from '@mui/material';
 import PersonalDataForm from './PersonalDataForm';
+import RequestStatus from './RequestStatus';
 
 const certificates = [
   "Справка в военкомат",
@@ -24,14 +26,15 @@ const certificates = [
 
 const CertificateRequest = () => {
   const [selectedCertificate, setSelectedCertificate] = useState('');
-  const [showPersonalForm, setShowPersonalForm] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState('main'); // 'main', 'form', 'status'
 
   const handleCertificateSelect = () => {
-    setShowPersonalForm(true);
+    setCurrentScreen('form');
   };
 
   const handleBack = () => {
-    setShowPersonalForm(false);
+    setCurrentScreen('main');
+    setSelectedCertificate('');
   };
 
   const handleSubmit = (formData) => {
@@ -40,16 +43,24 @@ const CertificateRequest = () => {
     
     // Через 2 секунды возвращаемся к выбору справки
     setTimeout(() => {
-      setShowPersonalForm(false);
+      setCurrentScreen('main');
       setSelectedCertificate('');
     }, 2000);
   };
 
-  if (showPersonalForm) {
+  if (currentScreen === 'form') {
     return (
       <PersonalDataForm
         certificateType={selectedCertificate}
         onSubmit={handleSubmit}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === 'status') {
+    return (
+      <RequestStatus
         onBack={handleBack}
       />
     );
@@ -62,7 +73,7 @@ const CertificateRequest = () => {
           Заказ справок
         </Typography>
         <Typography variant="body1" gutterBottom align="center" color="text.secondary">
-          Выберите необходимую справку
+          Выберите необходимую справку или проверьте статус существующей заявки
         </Typography>
         
         <FormControl fullWidth sx={{ my: 3 }}>
@@ -87,7 +98,7 @@ const CertificateRequest = () => {
           </RadioGroup>
         </FormControl>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Stack spacing={2} direction="column" alignItems="center">
           <Button
             variant="contained"
             size="large"
@@ -97,7 +108,16 @@ const CertificateRequest = () => {
           >
             Продолжить
           </Button>
-        </Box>
+          
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => setCurrentScreen('status')}
+            sx={{ minWidth: 200 }}
+          >
+            Проверить статус заявки
+          </Button>
+        </Stack>
       </Paper>
     </Container>
   );
