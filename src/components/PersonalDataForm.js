@@ -8,7 +8,9 @@ import {
   Grid,
   Button,
   Snackbar,
-  Alert
+  Alert,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 
 const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
@@ -20,6 +22,7 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
     studentId: '',
     comment: ''
   });
+  const [consent, setConsent] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleInputChange = (e) => {
@@ -146,6 +149,19 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
             sx={{ mb: 4 }}
           />
 
+          <Box sx={{ mb: 3 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  required
+                />
+              }
+              label="Я даю согласие на обработку моих персональных данных"
+            />
+          </Box>
+
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Button
               variant="outlined"
@@ -159,7 +175,7 @@ const PersonalDataForm = ({ certificateType, onSubmit, onBack }) => {
               type="submit"
               variant="contained"
               size="large"
-              disabled={!formData.lastName || !formData.firstName || !formData.group || !formData.studentId}
+              disabled={!formData.lastName || !formData.firstName || !formData.group || !formData.studentId || !consent}
               sx={{ minWidth: 200 }}
             >
               Заказать справку
