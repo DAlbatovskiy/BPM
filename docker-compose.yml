@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    restart: always
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - 1C_API_URL=http://host.docker.internal:8080/hs/zayavki
+      - DB_HOST=postgres
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=spravki
+    depends_on:
+      - frontend
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=spravki
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:

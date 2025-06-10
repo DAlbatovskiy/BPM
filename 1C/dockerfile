@@ -1,0 +1,19 @@
+# Базовый образ — Windows Server Core
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
+
+SHELL ["powershell", "-Command"]
+
+# Создаем рабочую папку
+RUN New-Item -ItemType Directory -Path C:\\Install
+
+# Копируем дистрибутив 1С внутрь
+COPY .\\1c-installer.exe C:\\Install\\setup.exe
+
+# Установка платформы в тихом режиме
+RUN Start-Process -FilePath \"E:\diplom\1c-docker\" -ArgumentList \"/S\" -Wait
+
+# Проброс портов
+EXPOSE 1540 1560 1570 8080 80
+
+# Установка точки входа (можно заменить на ragent.exe или rmngr.exe)
+CMD [\C:\Program Files (x86)\1cv8\8.3.25.1520\bin\\1cv8s.exe\"]
